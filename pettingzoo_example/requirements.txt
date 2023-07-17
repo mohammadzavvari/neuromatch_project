@@ -1,0 +1,5 @@
+gymnasium
+pettingzoo
+pygame
+pymunk
+scipy
