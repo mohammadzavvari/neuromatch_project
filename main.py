@@ -13,10 +13,10 @@ from MADDPG import MADDPG
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--env', type=str, default = 'simple_tag', help='name of the environment',
+    parser.add_argument('--env', type=str, default = 'simple_tag_4g_1b_colab', help='name of the environment',
                         choices=['simple_adversary', 'simple_crypto', 'simple_push', 'simple_reference',
                                  'simple_speaker_listener', 'simple_spread', 'simple_tag',
-                                 'simple_world_comm'])
+                                 'simple_world_comm', 'simple_tag_4_4'])
     parser.add_argument('--episode-length', type=int, default=25, help='steps per episode')
     parser.add_argument('--episode-num', type=int, default=30000, help='total number of episode')
     parser.add_argument('--gamma', type=float, default=0.95, help='discount factor')
@@ -69,7 +69,7 @@ if __name__ == '__main__':
             actions = maddpg.select_action(obs)
             next_obs, rewards, dones, infos = env.step(actions)
             episode_reward[step] = rewards
-            env.render()
+            # env.render()
             total_step += 1
 
             maddpg.add(obs, actions, rewards, next_obs, dones)

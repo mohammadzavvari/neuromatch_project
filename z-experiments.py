@@ -8,18 +8,56 @@ from matplotlib import pyplot as plt
 from multiagent import scenarios
 from multiagent.environment import MultiAgentEnv
 
-from MADDPG import MADDPG
+# for making a gif
+import imageio
+import glob
 
-if __name__ == '__main__':
+from MADDPG import MADDPG
+# Simple experiments, vary the arguments of simple_tag and see what happens.
+
+## Method to iteratively run experiments with different params
+
+
+## Create dictionary with experiment args to call
+
+
+def default_args():
+    "returns default args for simple_tag"
     parser = argparse.ArgumentParser()
-    parser.add_argument('--env', type=str, default="simple_tag_4g_1b_colab", help='name of the environment',
+    parser.add_argument('--env', type=str, default="simple_tag_4g_1b", help='name of the environment',
                         choices=['simple_adversary', 'simple_crypto', 'simple_push', 'simple_reference',
                                  'simple_speaker_listener', 'simple_spread', 'simple_tag',
                                  'simple_world_comm', 'simple_tag_colab'])
-    parser.add_argument('--folder', type=str, default='1', help='name of the folder where model is saved')
+    parser.add_argument('--folder', type=str, default='2', help='name of the folder where model is saved')
     parser.add_argument('--episode-length', type=int, default=50, help='steps per episode')
     parser.add_argument('--episode-num', type=int, default=30, help='total number of episode')
     args = parser.parse_args()
+    return args
+
+def run_experiment():
+    # list params/ args    
+    pass
+
+def create_gif(input_folder, output_gif):
+    # Gather all frames, in order
+    frame_files = sorted(glob.glob(os.path.join(input_folder, '*.png')))
+    
+    # Read frames into a list
+    frames = [imageio.imread(frame_file) for frame_file in frame_files]
+    
+    # Save frames as a GIF
+    imageio.mimsave(output_gif, frames)
+
+
+
+def evaluate_model(args=None, save_video=True):
+    if args is None:
+        args = default_args()
+
+    scenario = scenarios.load(f'{args.env}.py').Scenario()
+    world = scenario.make_world()
+    env = MultiAgentEnv(world, scenario.reset_world, scenario.reward, scenario.observation)
+
 
     # create env
     scenario = scenarios.load(f'{args.env}.py').Scenario()
@@ -42,6 +80,14 @@ if __name__ == '__main__':
         agent.actor.load_state_dict(actor_parameter)
     print(f'MADDPG load model.pt from {model_dir}')
 
+    frame_dir = os.path.join(model_dir, "frames")
+
+    # Create directories if they don't exist
+    os.makedirs(frame_dir, exist_ok=True)
+
+
+
+
     total_reward = np.zeros((args.episode_num, env.n))  # reward of each episode
     for episode in range(args.episode_num):
         obs = env.reset()
@@ -51,7 +97,12 @@ if __name__ == '__main__':
             actions = maddpg.select_action(obs)
             next_obs, rewards, dones, infos = env.step(actions)
             episode_reward[step] = rewards
-            env.render()
+            if save_video:
+                frame = env.render(mode='rgb_array')
+                name = f'episode_{episode}_step_{step}.png'
+                plt.imsave(os.path.join(model_dir, "frames", name), frame)
+            else:
+                env.render()
             time.sleep(0.02)
             obs = next_obs
 
@@ -61,6 +112,10 @@ if __name__ == '__main__':
         total_reward[episode] = cumulative_reward
         print(f'episode {episode + 1}: cumulative reward: {cumulative_reward}')
 
+    # Create gif
+    create_gif(os.path.join(model_dir, "frames"), os.path.join(model_dir, "animation.gif"))
+
+    
     # all episodes performed, evaluate finishes
     fig, ax = plt.subplots()
     x = range(1, args.episode_num + 1)
@@ -73,3 +128,10 @@ if __name__ == '__main__':
     title = f'evaluating result of maddpg solve {args.env}'
     ax.set_title(title)
     plt.savefig(os.path.join(model_dir, title))
+
+if __name__ == "__main__":
+    args = default_args()
+    create_gif(os.path.join("results/simple_tag_4g_1b/2", "frames"), os.path.join("results/simple_tag_4g_1b/2", "animation.gif"))
+
+
+

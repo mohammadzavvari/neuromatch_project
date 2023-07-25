@@ -98,8 +98,17 @@ class MultiAgentEnv(gym.Env):
 
         # all agents get total reward in cooperative case
         reward = np.sum(reward_n)
+
+        # reward_n = [np.sum(reward) for agent, reward in zip(self.agents, reward_n) if agent.adversary]
+
         if self.shared_reward:
             reward_n = [reward] * self.n
+
+        # if self.only_aversary_shared:
+        #     for n, agent in enumerate(self.agents):
+        #         if agent.adversary:
+        #             reward_n[n] = reward
+
 
         return obs_n, reward_n, done_n, info_n
 
