@@ -69,7 +69,7 @@ if __name__ == '__main__':
             actions = maddpg.select_action(obs)
             next_obs, rewards, dones, infos = env.step(actions)
             episode_reward[step] = rewards
-            # env.render()
+            env.render()
             total_step += 1
 
             maddpg.add(obs, actions, rewards, next_obs, dones)
