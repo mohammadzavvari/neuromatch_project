@@ -13,7 +13,7 @@ from MADDPG import MADDPG
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--env', type=str, default = 'simple_tag_4g_1b_colab', help='name of the environment',
+    parser.add_argument('--env', type=str, default = 'simple_tag_4g2b_goodcolab', help='name of the environment',
                         choices=['simple_adversary', 'simple_crypto', 'simple_push', 'simple_reference',
                                  'simple_speaker_listener', 'simple_spread', 'simple_tag',
                                  'simple_world_comm', 'simple_tag_4_4'])

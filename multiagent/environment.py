@@ -33,6 +33,10 @@ class MultiAgentEnv(gym.Env):
         self.force_discrete_action = world.discrete_action if hasattr(world, 'discrete_action') else False
         # if true, every agent has the same reward
         self.shared_reward = world.collaborative if hasattr(world, 'collaborative') else False
+        # if true, every good agent has same reward as all other good agents
+        self.good_reward = world.good_collaborative if hasattr(world, 'good_collaborative') else False
+        # if true, every bad agent has same reward as all other good agents
+        self.bad_reward = world.bad_collaborative if hasattr(world, 'bad_collaborative') else False
         self.time = 0
 
         # configure spaces
@@ -96,18 +100,51 @@ class MultiAgentEnv(gym.Env):
 
             info_n['n'].append(self._get_info(agent))
 
+        # good_mask = np.masked_where(agent.adversary == False)
+        
+        if self.good_reward:
+            good_reward = 0 
+            for agent, reward in zip(self.agents, reward_n):
+                if not agent.adversary:
+                    good_reward += reward
+            index = 0
+            for agent, reward  in zip(self.agents, reward_n):
+                if not agent.adversary:
+                    reward_n[index] = good_reward
+                index += 1
+        
+        # Alternative
+        # if self.shared_good:
+        #     adversary_mask = np.array([int(agent.adversary) for agent in self.agents])
+        #     rewards_n = np.array(reward_n)
+
+        #     good_rewards_sum = np.sum(reward_n[adversary_mask == 0])
+        #     bad_rewards_sum = np.sum(reward_n[adversary_mask == 1])
+
+        #     reward_n = np.where(
+        #         adversary_mask == 1, bad_rewards_sum, good_rewards_sum
+        #     )
+
+        if self.bad_reward:
+            bad_reward = 0 
+            for agent, reward in zip(self.agents, reward_n):
+                if agent.adversary:
+                    bad_reward += reward
+            index = 0
+            for agent, reward  in zip(self.agents, reward_n):
+                if agent.adversary:
+                    reward_n[index] = bad_reward
+                index += 1
+
+
         # all agents get total reward in cooperative case
         reward = np.sum(reward_n)
 
-        # reward_n = [np.sum(reward) for agent, reward in zip(self.agents, reward_n) if agent.adversary]
+        # if self.shared_reward:
+        #     reward_n = [reward] * self.n
 
-        if self.shared_reward:
-            reward_n = [reward] * self.n
 
-        # if self.only_aversary_shared:
-        #     for n, agent in enumerate(self.agents):
-        #         if agent.adversary:
-        #             reward_n[n] = reward
+        
 
 
         return obs_n, reward_n, done_n, info_n
