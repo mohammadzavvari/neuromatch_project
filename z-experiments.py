@@ -98,7 +98,9 @@ def evaluate_model(args=None, save_video=True):
             next_obs, rewards, dones, infos = env.step(actions)
             episode_reward[step] = rewards
             if save_video:
-                frame = env.render(mode='rgb_array')
+                # render output for rgb array is a list of frames
+                # to view, we just need the first frame
+                frame = env.render(mode='rgb_array')[0]
                 name = f'episode_{episode}_step_{step}.png'
                 plt.imsave(os.path.join(model_dir, "frames", name), frame)
             else:

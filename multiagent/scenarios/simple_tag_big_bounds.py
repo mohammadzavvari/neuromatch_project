@@ -8,8 +8,8 @@ class Scenario(BaseScenario):
         world = World()
         # set any world properties first
         world.dim_c = 2
-        num_good_agents = 1
-        num_adversaries = 3
+        num_good_agents = 4
+        num_adversaries = 2
         num_agents = num_adversaries + num_good_agents
         num_landmarks = 2
         # add agents
@@ -104,8 +104,9 @@ class Scenario(BaseScenario):
             if x < 0.9:
                 return 0
             if x < 1.0:
-                return (x - 0.9) * 10
-            return min(np.exp(2 * x - 2), 10)
+                return (x - 0.9) * 100
+            return 100
+            # return min(np.exp(2 * x - 2), 10)
         for p in range(world.dim_p):
             x = abs(agent.state.p_pos[p])
             rew -= bound(x)
@@ -126,6 +127,16 @@ class Scenario(BaseScenario):
                 for adv in adversaries:
                     if self.is_collision(ag, adv):
                         rew += 10
+        def bound(x):
+            if x < 0.9:
+                return 0
+            if x < 1.0:
+                return (x - 0.9) * 100
+            return 100
+            # return min(np.exp(2 * x - 2), 10)
+        for p in range(world.dim_p):
+            x = abs(agent.state.p_pos[p])
+            rew -= bound(x)
         return rew
 
     def observation(self, agent, world):
