@@ -131,7 +131,8 @@ def evaluate_model(args=None, save_video=True):
 
 if __name__ == "__main__":
     args = default_args()
-    create_gif(os.path.join("results/simple_tag_4g_1b/2", "frames"), os.path.join("results/simple_tag_4g_1b/2", "animation.gif"))
+    evaluate_model(args, save_video=True)
+    # create_gif(os.path.join("results/simple_tag_4g_1b/2", "frames"), os.path.join("results/simple_tag_4g_1b/2", "animation.gif"))
 
 
 

@@ -12,11 +12,11 @@ from MADDPG import MADDPG
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--env', type=str, default="simple_tag", help='name of the environment',
+    parser.add_argument('--env', type=str, default="simple_tag_4g2b_goodcolab", help='name of the environment',
                         choices=['simple_adversary', 'simple_crypto', 'simple_push', 'simple_reference',
                                  'simple_speaker_listener', 'simple_spread', 'simple_tag',
                                  'simple_world_comm', 'simple_tag_colab'])
-    parser.add_argument('--folder', type=str, default='1', help='name of the folder where model is saved')
+    parser.add_argument('--folder', type=str, default='3', help='name of the folder where model is saved')
     parser.add_argument('--episode-length', type=int, default=50, help='steps per episode')
     parser.add_argument('--episode-num', type=int, default=30, help='total number of episode')
     args = parser.parse_args()
