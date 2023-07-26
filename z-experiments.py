@@ -15,11 +15,6 @@ import glob
 from MADDPG import MADDPG
 # Simple experiments, vary the arguments of simple_tag and see what happens.
 
-## Method to iteratively run experiments with different params
-
-
-## Create dictionary with experiment args to call
-
 
 def default_args():
     "returns default args for simple_tag"

@@ -34,11 +34,14 @@ class MultiAgentEnv(gym.Env):
         # if true, even the action is continuous, action will be performed discretely
         self.force_discrete_action = world.discrete_action if hasattr(world, 'discrete_action') else False
         # if true, every agent has the same reward
-        self.shared_reward = world.collaborative if hasattr(world, 'collaborative') else False
+        self.shared_reward = world.collaborative if hasattr(world, 'collaborative') else False # check if false is hasattre but set to false!
         # if true, every good agent has same reward as all other good agents
         self.good_reward = world.good_collaborative if hasattr(world, 'good_collaborative') else False
         # if true, every bad agent has same reward as all other good agents
         self.bad_reward = world.bad_collaborative if hasattr(world, 'bad_collaborative') else False
+        # if true, change the adversary rewward to the new one that doesn't share!
+        # dont need here as just handles in the env file
+        # self.remove_adv_sharing = world.bad_collaborative if hasattr(world, 'remove_old_adv_sharing') else False
         self.time = 0
 
         # configure spaces
