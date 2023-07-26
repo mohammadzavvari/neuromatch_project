@@ -104,6 +104,7 @@ if __name__ == "__main__":
     total_reward = np.zeros(
         (args.episode_num, env.n)
     )  # reward of each agent in each episode
+    # print(args.episode_num)
     for episode in range(args.episode_num):
         obs = env.reset()
         # record reward of each agent in this episode
@@ -144,6 +145,9 @@ if __name__ == "__main__":
         [agent.actor.state_dict() for agent in maddpg.agents],
         os.path.join(res_dir, "model.pt"),
     )
+    # import pdb
+
+    # pdb.set_trace()
     # save training reward
     np.save(os.path.join(res_dir, "rewards.npy"), total_reward)
 
