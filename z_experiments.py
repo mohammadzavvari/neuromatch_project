@@ -244,4 +244,4 @@ if __name__ == "__main__":
     shape_folders = ["shape_reward", "no_colab_shape_reward"] # dan macbook
 
     evaluate_new_models(episode_length=100, episode_num=3, 
-                        folder_names=["good_sharing_soft_bounds"])
+                        folder_names=[mohammad_folders[1]])
