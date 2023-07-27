@@ -166,10 +166,19 @@ def evaluate_model(args=None, world_args=None, save_video=True):
 if __name__ == "__main__":
     args = default_args()
     # Specify folder using arguments
-    main_args = {'env': 'simple_tag_big_bounds', 'folder': '1', 'episode_length': 50, 'episode_num': 2}
+    # main_args = {'env': 'simple_tag_no_adv_sharing', 'folder': '4', 'episode_length': 100, 'episode_num': 3}
+    # main_args = get_args(main_args)
+    # evaluate_model(main_args, save_video=True)
+
+    # main_args = {'env': 'simple_tag_big_bounds', 'folder': '1', 'episode_length': 100, 'episode_num': 3}
+    # main_args = get_args(main_args)
+    # evaluate_model(main_args, save_video=True)
+
+
+    main_args = {'env': 'simple_tag_goty_edition', 'folder': '1', 'episode_length': 100, 'episode_num': 3}
     main_args = get_args(main_args)
-    evaluate_model(main_args, save_video=True)
-    # create_gif(os.path.join("results/simple_tag_4g_1b/2", "frames"), os.path.join("results/simple_tag_4g_1b/2", "animation.gif"))
-
-
-
+    world_args = {'out_of_bound_punishment':100,
+                  'hard_boundary':True,
+                  'good_collaborative': True,
+                  'bad_collaborative' : False}
+    evaluate_model(main_args, world_args, save_video=True)
