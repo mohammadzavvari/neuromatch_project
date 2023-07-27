@@ -15,8 +15,11 @@ class Scenario(BaseScenario):
             'good_collaborative': False,
             'bad_collaborative': False,
             'remove_old_adv_sharing': True,
-            'shape_reward': False
-        # world.bad_collaborative = False
+            'shape_reward': False,
+            'good_accel': 4.0,
+            'adv_accel': 3.0,
+            'good_max_speed': 1.3,
+            'adv_max_speed': 1.0
         }
         args = {**default_args, **kwargs}  # Merge default_args and provided kwargs
         

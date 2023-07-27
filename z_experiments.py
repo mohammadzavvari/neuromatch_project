@@ -30,6 +30,22 @@ def default_args():
     args = parser.parse_args()
     return args
 
+DEFAULT_ARGS = {'env': 'simple_tag_no_adv_sharing', 'folder': '1', 'episode_length': 50, 'episode_num': 2}
+
+def arg_parser(args_dict):
+    "convert arg dict to argparse object"
+    parser = argparse.ArgumentParser()
+    for key, value in args_dict.items():
+        parser.add_argument(f'--{key}', type=type(value), default=value)
+    return parser.parse_args()
+
+def get_args(new_args, default_args=DEFAULT_ARGS):
+    "return default args with any specified arguments updates as argparse object"
+    args_dict = default_args
+    for key, value in new_args.items():
+        args_dict[key] = value
+    return arg_parser(args_dict)
+
 def run_experiment():
     # list params/ args    
     pass
@@ -149,7 +165,9 @@ def evaluate_model(args=None, world_args=None, save_video=True):
 
 if __name__ == "__main__":
     args = default_args()
-    evaluate_model(args, save_video=True)
+    main_args = {'env': 'simple_tag_big_bounds', 'folder': '1', 'episode_length': 50, 'episode_num': 2}
+    main_args = get_args(main_args)
+    evaluate_model(main_args, save_video=True)
     # create_gif(os.path.join("results/simple_tag_4g_1b/2", "frames"), os.path.join("results/simple_tag_4g_1b/2", "animation.gif"))
 
 
