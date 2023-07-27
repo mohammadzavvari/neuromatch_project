@@ -13,9 +13,6 @@ from MADDPG import MADDPG
 
 # We now name our folderbased on arguments if loading goty edition
 # We also add a new scenario to simple_tag_goty_edition.py
-
-
-
 # EXPERIMENT ARGS GLOBALS
 DEFAULT_ARGS = {'env': 'simple_tag',
                 'episode_length': 25, 
@@ -57,22 +54,6 @@ default_world_args = {
     'remove_old_adv_sharing': True,
     'shape_reward': False}
 
-# Example
-# We need to pass both of these to use the goty edition and world args
-example_main_args = {'env' : 'simple_tag_goty_edition',}
-example_world_args = {
-    'out_of_bound_punishment': 100,
-    'hard_boundary': True,
-    'good_collaborative': True,
-    'bad_collaborative': False}
-
-
-# world.collaborative = True # old colaborative method
-# ind_adversary = True # remove old adversary reward sharing method
-# num_good_agents = 4
-# num_adversaries = 2
-# good_collaborative = True
-# bad_collaborative = False
 
 
 def arg_parser(args_dict) -> argparse.Namespace:
@@ -96,6 +77,128 @@ def get_world_args(new_args, default_args) -> dict:
     for key, value in new_args.items():
         world_args[key] = value
     return world_args
+
+def run_individually(my_name = "Dan"):
+    main_args = {'env': 'simple_tag_goty_edition'}
+
+    default_world_args = {
+        'num_good_agents': 4,
+        'num_adversaries': 2,
+        'num_landmarks': 2,
+        'out_of_bound_punishment': 100,
+        'hard_boundary': 10,
+        'old_collaborative': False,
+        'good_collaborative': False,
+        'bad_collaborative': False,
+        'remove_old_adv_sharing': True,
+        'shape_reward': False}
+    
+    # original boundaries
+    soft_bounds = {
+        'out_of_bound_punishment': 10,
+        'hard_boundary': False,
+    }
+
+    # Sharing vs. no sharing
+    no_colab = {'old_collaborative': False,
+                'good_collaborative': False,
+                'bad_collaborative': False,
+                'remove_old_adv_sharing': True}
+    
+    good_sharing = {'good_collaborative': True}
+
+    bad_sharing = {'bad_collaborative': True}
+
+    good_and_bad_sharing = {'good_collaborative': True,
+                            'bad_collaborative': True}
+    
+    all_share_together = {'old_collaborative': True}
+    
+    if my_name == "Dan":
+        # No colab with and without boundaries
+        my_world_args = no_colab
+        folder_name = 'no_colab'
+        world_args = get_world_args(default_world_args, my_world_args)
+        run_experiment(args=main_args, world_args=world_args, folder_name=folder_name)
+
+        my_world_args = {**no_colab, **soft_bounds}
+        folder_name = 'no_colab_soft_bounds'
+        world_args = get_world_args(default_world_args, my_world_args)
+        run_experiment(args=main_args, world_args=world_args, folder_name=folder_name)
+
+        my_world_args = good_sharing
+        folder_name = 'good_sharing'
+        world_args = get_world_args(default_world_args, my_world_args)
+        run_experiment(args=main_args, world_args=world_args, folder_name=folder_name)
+
+        my_world_args = {**good_sharing, **soft_bounds}
+        folder_name = 'good_sharing_soft_bounds'
+        world_args = get_world_args(default_world_args, my_world_args)
+        run_experiment(args=main_args, world_args=world_args, folder_name=folder_name)
+    if my_name == "Jasvin":
+        my_world_args = bad_sharing
+        folder_name = 'bad_sharing'
+        world_args = get_world_args(default_world_args, my_world_args)
+        run_experiment(args=main_args, world_args=world_args, folder_name=folder_name)
+        
+        my_world_args = {**bad_sharing, **soft_bounds}
+        folder_name = 'bad_sharing_soft_bounds'
+        world_args = get_world_args(default_world_args, my_world_args)
+        run_experiment(args=main_args, world_args=world_args, folder_name=folder_name)
+
+
+    if my_name == "Mrugsen":
+        my_world_args = good_and_bad_sharing
+        folder_name = 'good_and_bad_sharing'
+        world_args = get_world_args(default_world_args, my_world_args)
+        run_experiment(args=main_args, world_args=world_args, folder_name=folder_name)
+        
+        my_world_args = {**good_and_bad_sharing, **soft_bounds}
+        folder_name = 'good_and_bad_sharing_soft_bounds'
+        world_args = get_world_args(default_world_args, my_world_args)
+        run_experiment(args=main_args, world_args=world_args, folder_name=folder_name)
+
+    if my_name == "Mohammad":
+        my_world_args = all_share_together
+        folder_name = 'all_share_together'
+        world_args = get_world_args(default_world_args, my_world_args)
+        run_experiment(args=main_args, world_args=world_args, folder_name=folder_name)
+        
+        my_world_args = {**all_share_together, **soft_bounds}
+        folder_name = 'all_share_together_soft_bounds'
+        world_args = get_world_args(default_world_args, my_world_args)
+        run_experiment(args=main_args, world_args=world_args, folder_name=folder_name)
+
+    if my_name == "Ash":
+        pass
+
+
+
+
+# 1. Number of agents/ adversaries
+
+# 2. Number of episodes
+
+# 3. 
+
+# Example
+# We need to pass both of these to use the goty edition and world args
+example_main_args = {'env' : 'simple_tag_goty_edition'}
+example_world_args = {
+    'out_of_bound_punishment': 100,
+    'hard_boundary': True,
+    'good_collaborative': True,
+    'bad_collaborative': False}
+
+
+# world.collaborative = True # old colaborative method
+# ind_adversary = True # remove old adversary reward sharing method
+# num_good_agents = 4
+# num_adversaries = 2
+# good_collaborative = True
+# bad_collaborative = False
+
+
 
 def default_args():
     parser = argparse.ArgumentParser()
@@ -129,7 +232,7 @@ def get_running_reward(reward_array: np.ndarray, window=100):
             running_reward[i] = np.mean(reward_array[i - window + 1:i + 1])
         return running_reward
 
-def run_experiment(args=None, world_args=None):
+def run_experiment(args=None, world_args=None, folder_name=None):
     # list params/ args    
     # pass default args unless specified 
     print(args)
@@ -141,10 +244,12 @@ def run_experiment(args=None, world_args=None):
     print(args)
     # args = parser.parse_args()
     start = time()
-    folder_name = args.env
+    
     # create unique folder name based on world args 
-    if world_args is not None and args.env == 'simple_tag_goty_edition':
-        folder_name = '_'.join([f'{key}={value}' for key, value in world_args.items()])
+    if folder_name is None:
+        folder_name = args.env
+        if world_args is not None and args.env == 'simple_tag_goty_edition':
+            folder_name = '_'.join([f'{key}={value}' for key, value in world_args.items()])
 
     # create folder to save result
     env_dir = os.path.join('results', folder_name)
@@ -231,13 +336,17 @@ def run_experiment(args=None, world_args=None):
     print(f'training finishes, time spent: {datetime.timedelta(seconds=int(time() - start))}')
 
 if __name__ == '__main__':
-    # run_experiment(args=no_adv_sharing_args)
+    ## Examples
     # run_experiment(args=big_bounds_args)
-    main_args = {'env': 'simple_tag_goty_edition'}
-    world_args = {
-    'out_of_bound_punishment': 100,
-    'hard_boundary': True,
-    'good_collaborative': True,
-    'bad_collaborative': False
-    }
-    run_experiment(args=main_args, world_args=world_args)
+    # main_args = {'env': 'simple_tag_goty_edition'}
+    # world_args = {
+    # 'out_of_bound_punishment': 100,
+    # 'hard_boundary': True,
+    # 'good_collaborative': True,
+    # 'bad_collaborative': False
+    # }
+    # run_experiment(args=main_args, world_args=world_args)
+
+    ## Experiments
+    user_input = input("Enter your name: ")
+    run_individually(my_name=user_input)

@@ -2,6 +2,7 @@ import argparse
 import os
 import time
 
+
 import numpy as np
 import torch
 from matplotlib import pyplot as plt
@@ -14,7 +15,7 @@ import glob
 
 from MADDPG import MADDPG
 import re
-import pygame
+
 # Simple experiments, vary the arguments of simple_tag and see what happens.
 
 
@@ -169,7 +170,8 @@ def evaluate_model(args=None, world_args=None, save_video=True):
 
     # close the environment!
     env.close()
-    pygame.quit()
+    plt.close('all')
+
 
 def evaluate_trained_models(episode_length=100, episode_num=5):
     "evaluate all trained models and output gifs"
