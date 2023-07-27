@@ -165,6 +165,7 @@ def evaluate_model(args=None, world_args=None, save_video=True):
 
 if __name__ == "__main__":
     args = default_args()
+    # Specify folder using arguments
     main_args = {'env': 'simple_tag_big_bounds', 'folder': '1', 'episode_length': 50, 'episode_num': 2}
     main_args = get_args(main_args)
     evaluate_model(main_args, save_video=True)
