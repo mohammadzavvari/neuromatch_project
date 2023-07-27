@@ -135,6 +135,7 @@ def run_individually(my_name = "Dan"):
         folder_name = 'good_sharing_soft_bounds'
         world_args = get_world_args(default_world_args, my_world_args)
         run_experiment(args=main_args, world_args=world_args, folder_name=folder_name)
+        
     if my_name == "Jasvin":
         my_world_args = bad_sharing
         folder_name = 'bad_sharing'

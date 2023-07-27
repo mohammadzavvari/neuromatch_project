@@ -12,7 +12,7 @@ from multiagent.environment import MultiAgentEnv
 # for making a gif
 import imageio
 import glob
-
+import pyglet
 from MADDPG import MADDPG
 import re
 
@@ -81,7 +81,7 @@ def create_gif(input_folder, output_gif):
     # Save frames as a GIF
     imageio.mimsave(output_gif, frames)
     
-def evaluate_model(args=None, world_args=None, save_video=True):
+def evaluate_model(args=None, world_args=None, save_video=True, folder_name=None):
     if args is None:
         args = default_args()
 
@@ -103,14 +103,20 @@ def evaluate_model(args=None, world_args=None, save_video=True):
         act_dim_list.append(act_space.n)  # Discrete
 
     maddpg = MADDPG(obs_dim_list, act_dim_list, 0, 0, 0)
-    folder_name = args.env
-    # create unique folder name based on world args 
-    # we need to specify the folder number manually still
-    if world_args is not None and args.env == 'simple_tag_goty_edition':
-        folder_name = '_'.join([f'{key}={value}' for key, value in world_args.items()])
+    if folder_name is None:
+        folder_name = args.env
+        # create unique folder name based on world args 
+        # we need to specify the folder number manually still
+        if world_args is not None and args.env == 'simple_tag_goty_edition':
+            folder_name = '_'.join([f'{key}={value}' for key, value in world_args.items()])
+
     model_dir = os.path.join('results', folder_name, args.folder)
+    # make model_dir if model_dir does not exist
+    if not os.path.exists(model_dir):
+        os.makedirs(model_dir)
 
     assert os.path.exists(model_dir)
+
     data = torch.load(os.path.join(model_dir, 'model.pt'))
     for agent, actor_parameter in zip(maddpg.agents, data):
         agent.actor.load_state_dict(actor_parameter)
@@ -137,11 +143,12 @@ def evaluate_model(args=None, world_args=None, save_video=True):
                 frame = env.render(mode='rgb_array')[0]
                 name = f'episode_{episode}_step_{step}.png'
                 plt.imsave(os.path.join(model_dir, "frames", name), frame)
+                plt.close("all")
             else:
                 env.render()
             time.sleep(0.02)
             obs = next_obs
-
+        pyglet.app.exit()
         # episode finishes
         # calculate cumulative reward of each agent in this episode
         cumulative_reward = episode_reward.sum(axis=0)
@@ -193,9 +200,18 @@ def evaluate_trained_models(episode_length=100, episode_num=5):
 
 
         
+def evaluate_new_models(episode_length=100, episode_num=5, folder_names=None):
+    "New models with goty edition"
+    args_dict = {'episode_length': episode_length, 'episode_num': episode_num}
+    env_folder_dict = {'env': 'simple_tag_goty_edition', 'folder': '1'}
+    for folder_name in folder_names:
+        main_args_dict = {**env_folder_dict, **args_dict}
+        print(main_args_dict)
+        main_args = get_args(main_args_dict)
+        evaluate_model(main_args, save_video=True, folder_name=folder_name)
+
 
     
-
 
 if __name__ == "__main__":
     args = default_args()
@@ -216,4 +232,16 @@ if __name__ == "__main__":
     #               'good_collaborative': True,
     #               'bad_collaborative' : False}
     # evaluate_model(main_args, world_args, save_video=True)
-    evaluate_trained_models(episode_length=100, episode_num=5)
+    # evaluate_trained_models(episode_length=100, episode_num=5)
+
+    dan_folders = ["no_colab", 
+                  "no_colab_soft_bounds", 
+                  "good_sharing",
+                  "good_sharing_soft_bounds"]
+    jasvin_folders = ["bad_sharing", "bad_sharing_soft_bounds"] # ashutosh
+    mrugsen_folders = ["good_and_bad_sharing", "good_and_bad_sharing_soft_bounds"]
+    mohammad_folders = ["all_share_together", "all_share_together_soft_bounds"] # dan
+    shape_folders = ["shape_reward", "no_colab_shape_reward"] # dan macbook
+
+    evaluate_new_models(episode_length=100, episode_num=3, 
+                        folder_names=["good_sharing_soft_bounds"])
