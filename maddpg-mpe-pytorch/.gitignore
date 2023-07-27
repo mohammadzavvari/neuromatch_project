@@ -2,5 +2,6 @@ __pycache__/
 *.egg-info/
 *.pyc
 /.venv/
-/.idea/
+/.idea/*
+.idea/*
 /results/
