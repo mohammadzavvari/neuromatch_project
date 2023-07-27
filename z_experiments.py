@@ -14,6 +14,7 @@ import glob
 
 from MADDPG import MADDPG
 import re
+import pygame
 # Simple experiments, vary the arguments of simple_tag and see what happens.
 
 
@@ -148,6 +149,9 @@ def evaluate_model(args=None, world_args=None, save_video=True):
 
     # Create gif
     create_gif(os.path.join(model_dir, "frames"), os.path.join(model_dir, "animation.gif"))
+    
+    os.makedirs("animations", exist_ok=True)
+    create_gif(os.path.join(model_dir, "frames"), os.path.join("animations", folder_name+".gif"))
 
     
     # all episodes performed, evaluate finishes
@@ -163,6 +167,34 @@ def evaluate_model(args=None, world_args=None, save_video=True):
     ax.set_title(title)
     plt.savefig(os.path.join(model_dir, title))
 
+    # close the environment!
+    env.close()
+    pygame.quit()
+
+def evaluate_trained_models(episode_length=100, episode_num=5):
+    "evaluate all trained models and output gifs"
+    args_dict = {'episode_length': episode_length, 'episode_num': episode_num}
+    env_folder_dict = [
+        {'env': 'simple_tag', 'folder': '1'},
+        {'env': 'simple_tag_4g_1b', 'folder': '2'},
+        {'env': 'simple_tag_4g_1b_colab', 'folder': '1'},
+        {'env': 'simple_tag_4g2b_goodcolab', 'folder': '3'},
+        {'env': 'simple_tag_big_bounds', 'folder': '1'},
+        {'env': 'simple_tag_colab', 'folder': '2'},
+        {'env': 'simple_tag_no_adv_sharing', 'folder': '4'},
+    ]
+    for env_folder in env_folder_dict:
+        main_args_dict = {**env_folder, **args_dict}
+        print(main_args_dict)
+        main_args = get_args(main_args_dict)
+        evaluate_model(main_args, save_video=True)
+
+
+        
+
+    
+
+
 if __name__ == "__main__":
     args = default_args()
     # Specify folder using arguments
@@ -175,10 +207,11 @@ if __name__ == "__main__":
     # evaluate_model(main_args, save_video=True)
 
 
-    main_args = {'env': 'simple_tag_goty_edition', 'folder': '1', 'episode_length': 100, 'episode_num': 3}
-    main_args = get_args(main_args)
-    world_args = {'out_of_bound_punishment':100,
-                  'hard_boundary':True,
-                  'good_collaborative': True,
-                  'bad_collaborative' : False}
-    evaluate_model(main_args, world_args, save_video=True)
+    # main_args = {'env': 'simple_tag_goty_edition', 'folder': '1', 'episode_length': 100, 'episode_num': 3}
+    # main_args = get_args(main_args)
+    # world_args = {'out_of_bound_punishment':100,
+    #               'hard_boundary':True,
+    #               'good_collaborative': True,
+    #               'bad_collaborative' : False}
+    # evaluate_model(main_args, world_args, save_video=True)
+    evaluate_trained_models(episode_length=100, episode_num=5)
